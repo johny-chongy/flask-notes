@@ -62,3 +62,14 @@ class User(db.Model):
                    first_name=first_name,
                    last_name=last_name)
 
+    @classmethod
+    def verify(cls, username, pwd):
+        """Verify user in w/ inputed username and password
+        Return user if valid; else return False."""
+
+        user = cls.query.filter_by(username=username).one_or_none()
+
+        if user and bcrypt.check_password_hash(user.password, pwd):
+            return user
+        else:
+            return False

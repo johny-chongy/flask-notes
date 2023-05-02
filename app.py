@@ -17,15 +17,15 @@ db.create_all()
 
 toolbar = DebugToolbarExtension(app)
 
-@app.get('/')
+@app.get("/")
 def homepage():
     """Redirect to '/register'"""
 
-    return redirect('/register')
+    return redirect("/register")
 
-@app.route('/register', methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    """ Register user: produce form & handle form submission."""
+    """ Register user: produce registration form & handle form submission."""
 
     form = RegisterForm()
 
@@ -51,3 +51,26 @@ def register():
 
     else:
         return render_template("register.html", form=form)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """ Login user: produce login form & handle form submission. """
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        pwd = form.password.data
+
+        user = User.verify(username, pwd)
+
+        if user:
+            session["user_id"] = user.id
+            flash("Login successful!")
+            return redirect(f"/users/{user.username}")
+
+        else:
+            form.username.errors = ["Invalid name/password"]
+
+    return render_template("login.html", form=form)
+
