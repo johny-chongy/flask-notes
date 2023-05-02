@@ -5,23 +5,24 @@
   <h1 class="display-4">Register New User</h1>
   <p class="lead">Join us!</p>
 
+
   <form method="POST">
 
     {{ form.hidden_tag() }}
 
     {% for field in form
   if field.widget.input_type != 'hidden' %}
-      <p>
+      <div class="mb-3">
         {{ field.label }}
         {{ field }}
 
         {% for error in field.errors %}
           {{ error }}
         {% endfor %}
-      </p>
+      </div>
     {% endfor %}
 
-    <button type="submit">Register User</button>
+    <button class="btn btn-success" type="submit">Register User</button>
 
   </form>
 

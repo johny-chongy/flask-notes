@@ -8,12 +8,33 @@
   <title>Document</title>
 </head>
 <body>
+  <nav class="navbar navbar-light bg-primary">
+    <div class="container-fluid">
+        <div class="navbar-brand d-flex flex-row justify-content-between">
+            <a class="text-white" href="/"> Notes </a>
+
+            {% if 'user_id' not in session %}
+              <a class="text-white" href="/register"> Register </a>
+              <a class="text-white" href="/login"> Login </a>
+            {% endif %}
+
+            {% if 'user_id' in session %}
+              <form action="/logout" method="POST">
+                {{form.hidden_tag()}}
+                <button type="submit" class="btn btn-link text-white">Logout</button>
+              </form>
+            {% endif %}
+
+        </div>
+    </div>
+  </nav>
+
   {% for message in get_flashed_messages() %}
-    <p>{{ message }} </p>
+    <p class="alert alert-primary">{{ message }} </p>
   {% endfor %}
 
-  {% block content %}
 
+  {% block content %}
   {% endblock %}
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>

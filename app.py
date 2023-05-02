@@ -27,6 +27,8 @@ def homepage():
 def register():
     """ Register user: produce registration form & handle form submission."""
 
+    #TODO: if user logged in, redirect to user page
+
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -36,11 +38,15 @@ def register():
         first_name = form.first_name.data
         last_name = form.last_name.data
 
+
         user = User.register(username,
                              password,
                              email,
                              first_name,
                              last_name)
+
+        # TODO: try and add user: works, cool // error: handle it
+        # catch error
 
         db.session.add(user)
         db.session.commit()
@@ -73,4 +79,33 @@ def login():
             form.username.errors = ["Invalid name/password"]
 
     return render_template("login.html", form=form)
+
+@app.get("/users/<username>")
+def user_details(username):
+    """ Show user detail for specific user
+        Make sure logged in user can see
+    """
+    if "user_id" not in session:
+        flash("You must be logged in!")
+        return redirect("/login")
+    else:
+        user = User.query.get(session["user_id"])
+        if user.username == username:
+            return render_template("user.html", user=user, form=CSRFProtectForm())
+        else:
+            #TODO: check demo code for flash msg
+            flash("Unauthorized access")
+            return redirect(f"/users/{user.username}")
+
+@app.post("/logout")
+def logout():
+    """ Log user out and redirect to homepage """
+
+    form = CSRFProtectForm()
+
+    if form.validate_on_submit():
+        session.pop("user_id", None)
+
+    return redirect("/")
+
 
