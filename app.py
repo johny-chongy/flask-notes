@@ -3,8 +3,8 @@ import os
 from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 
-from models import connect_db, db, User
-from forms import RegisterForm, LoginForm, CSRFProtectForm
+from models import connect_db, db, User, Note
+from forms import RegisterForm, LoginForm, CSRFProtectForm, NewNoteForm
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
@@ -85,17 +85,15 @@ def user_details(username):
     """ Show user detail for specific user
         Make sure logged in user can see
     """
-    if "user_id" not in session:
-        flash("You must be logged in!")
-        return redirect("/login")
+
+    user = User.query.get(session["user_id"])
+    check = check_authorization(username)
+
+    if not check:
+        flash("Unauthorized Access")
+        return redirect("/")
     else:
-        user = User.query.get(session["user_id"])
-        if user.username == username:
-            return render_template("user.html", user=user, form=CSRFProtectForm())
-        else:
-            #TODO: check demo code for flash msg
-            flash("Unauthorized access")
-            return redirect(f"/users/{user.username}")
+       return render_template("user.html", user=user, form=CSRFProtectForm())
 
 @app.post("/logout")
 def logout():
@@ -109,3 +107,29 @@ def logout():
     return redirect("/")
 
 
+@app.route("/users/<username>/notes/add", methods=["GET", "POST"])
+def add_note(username):
+    """Display form to add a new note
+    Handle submission and redirect to user page"""
+
+    if "user_id" not in session:
+        flash("You must be logged in!")
+        return redirect("/login")
+    else:
+        if user.username == username:
+            return render_template("new-note.html", user=user, form=NewNoteForm())
+        else:
+            #TODO: check demo code for flash msg
+            flash("Unauthorized access")
+            return redirect(f"/users/{user.username}")
+
+
+def check_authorization(username):
+    """Check if logged in user has authorization to route"""
+
+    user = User.query.get(session["user_id"])
+
+    if "user_id" not in session or user.username != username:
+        return False
+    else:
+        return True

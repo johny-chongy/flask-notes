@@ -6,4 +6,11 @@
   <p>Email: {{user.email}}</p>
   <p>First Name: {{user.first_name}}</p>
   <p>Last Name: {{user.last_name}}</p>
+  <ul>
+    {% for note in user.notes %}
+      <li>
+        <a href="/notes/{{note.id}}/update">{{note.title}}</a>
+      </li>
+    {% endfor %}
+    </ul>
 {% endblock %}
