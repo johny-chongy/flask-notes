@@ -2,9 +2,7 @@
 
 {% block content %}
 
-  <h1 class="display-4">Register New User</h1>
-  <p class="lead">Join us!</p>
-
+  <h1 class="display-4">Edit Note</h1>
 
   <form method="POST">
 
@@ -12,7 +10,7 @@
 
     {% for field in form
   if field.widget.input_type != 'hidden' %}
-      <div class="form-label">
+      <div class="mb-3">
         {{ field.label }}
         {{ field }}
 
@@ -21,8 +19,10 @@
         {% endfor %}
       </div>
     {% endfor %}
-
-    <button class="btn btn-success" type="submit">Register User</button>
+    <div class="d-flex">
+      <button class="btn btn-success" type="submit">Save Changes</button>
+      <a class="btn btn-warning" href="/users/{{note.user.username}}">Cancel</a>
+    </div>
 
   </form>
 

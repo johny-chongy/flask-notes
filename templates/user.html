@@ -2,15 +2,28 @@
 
 {% block content %}
 <h1>User Details</h1>
-  <p>Username: {{user.username}}</p>
-  <p>Email: {{user.email}}</p>
-  <p>First Name: {{user.first_name}}</p>
-  <p>Last Name: {{user.last_name}}</p>
-  <ul>
-    {% for note in user.notes %}
-      <li>
-        <a href="/notes/{{note.id}}/update">{{note.title}}</a>
-      </li>
-    {% endfor %}
-    </ul>
+<p>Username: {{user.username}}</p>
+<p>Email: {{user.email}}</p>
+<p>First Name: {{user.first_name}}</p>
+<p>Last Name: {{user.last_name}}</p>
+<ul>
+  {% for note in user.notes %}
+  <li>
+    <div class="d-flex">
+      <form action="/notes/{{note.id}}/delete" method="POST">
+        <button class="btn btn-warning">
+          <i class="bi bi-trash-fill"></i>
+        </button>
+      </form>
+      <a href="/notes/{{note.id}}/update">{{note.title}}</a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+<div class="d-flex">
+  <a class="btn btn-info" href="/users/{{user.username}}/notes/add">Add Note</a>
+  <form action="/users/{{user.username}}/delete" method="POST">
+    <button class="btn btn-danger">Delete User</button>
+  </form>
+</div>
 {% endblock %}
