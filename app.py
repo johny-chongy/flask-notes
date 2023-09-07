@@ -15,13 +15,15 @@ app.config["SECRET_KEY"] = "abc123"
 connect_db(app)
 db.create_all()
 
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
+
 
 @app.get("/")
 def homepage():
     """Redirect to '/register'"""
 
     return redirect("/register")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -41,12 +43,11 @@ def register():
             first_name = form.first_name.data
             last_name = form.last_name.data
 
-
             user = User.register(username,
-                                password,
-                                email,
-                                first_name,
-                                last_name)
+                                 password,
+                                 email,
+                                 first_name,
+                                 last_name)
 
             # TODO: try and add user: works, cool // error: handle it
             # catch error
@@ -60,6 +61,7 @@ def register():
 
         else:
             return render_template("register.html", form=form)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -83,6 +85,7 @@ def login():
 
     return render_template("login.html", form=form)
 
+
 @app.get("/users/<username>")
 def user_details(username):
     """ Show user detail for specific user
@@ -96,7 +99,8 @@ def user_details(username):
         flash("Unauthorized Access")
         return redirect("/")
     else:
-       return render_template("user.html", user=check_user, form=CSRFProtectForm())
+        return render_template("user.html", user=check_user, form=CSRFProtectForm())
+
 
 @app.post("/logout")
 def logout():
@@ -122,22 +126,22 @@ def add_note(username):
         flash("Unauthorized Access")
         return redirect("/")
     else:
-       form=NewNoteForm()
+        form = NewNoteForm()
 
-       if form.validate_on_submit():
-           title = form.title.data
-           content = form.content.data
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
 
-           new_note = Note(title=title,
-                           content=content,
-                           owner_id=user.id)
+            new_note = Note(title=title,
+                            content=content,
+                            owner_id=user.id)
 
-           db.session.add(new_note)
-           db.session.commit()
+            db.session.add(new_note)
+            db.session.commit()
 
-           return redirect(f"/users/{user.username}")
-       else:
-           return render_template("new-note.html", user=user, form=form)
+            return redirect(f"/users/{user.username}")
+        else:
+            return render_template("new-note.html", user=user, form=form)
 
 
 @app.post("/users/<username>/delete")
@@ -151,15 +155,16 @@ def delete_user(username):
         flash("Unauthorized Access")
         return redirect("/")
     else:
-    #    for note in user.notes:
-    #        db.session.delete(note)
-       Note.query.filter_by(owner_id=user.id).delete()
-       db.session.delete(user)
-       db.session.commit()
+        #    for note in user.notes:
+        #        db.session.delete(note)
+        Note.query.filter_by(owner_id=user.id).delete()
+        db.session.delete(user)
+        db.session.commit()
 
-       session.pop("user_id", None)
+        session.pop("user_id", None)
 
-       return redirect("/")
+        return redirect("/")
+
 
 @app.route("/notes/<int:note_id>/update", methods=["GET", "POST"])
 def update_note(note_id):
@@ -174,17 +179,17 @@ def update_note(note_id):
         flash("Unauthorized Access")
         return redirect("/")
     else:
-       if form.validate_on_submit():
-           note.title = form.title.data
-           note.content = form.content.data
+        if form.validate_on_submit():
+            note.title = form.title.data
+            note.content = form.content.data
 
-           db.session.commit()
+            db.session.commit()
 
-           return redirect(f"/users/{note.user.username}")
-       else:
-           return render_template("edit-note.html",
-                                  form=form,
-                                  note=note)
+            return redirect(f"/users/{note.user.username}")
+        else:
+            return render_template("edit-note.html",
+                                   form=form,
+                                   note=note)
 
 
 @app.post("/notes/<int:note_id>/delete")
@@ -204,10 +209,6 @@ def delete_note(note_id):
         db.session.commit()
 
         return redirect(f"/users/{username}")
-
-
-
-
 
 
 def check_authorization():
